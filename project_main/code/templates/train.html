@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRAINING</title>
+    <script src="https://unpkg.com/htmx.org@1.9.11"
+        integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/showdown/dist/showdown.min.js"></script>
+    <style>
+      /* Global Styles */
+body {
+    font-family: 'Montserrat', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #101010;
+    color: #fff;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1f1f1f;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+/* Navigation Bar */
+.navbar {
+    overflow: hidden;
+    background-color: #1f1f1f;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.navbar a {
+    float: left;
+    display: block;
+    color: #fff;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+    color: #ff6666;
+}
+
+/* Steps Section */
+.step {
+    margin-bottom: 30px;
+}
+
+.step h2 {
+    margin-bottom: 15px;
+    color: #fff;
+}
+
+/* Textarea and Input */
+textarea,
+#correctionBox {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    box-sizing: border-box;
+    font-size: 16px;
+    color: #333;
+    background-color: #dbd6d6;
+}
+
+.text_bg {
+    background-color: #1f1f1f;
+    padding: 10px;
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+#generate-button,
+#playButton,
+#volumeDown,
+#volumeUp,
+#nextButton,
+#practice-now {
+    background-color: #ff6666;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 24px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#generate-button:hover,
+#playButton:hover,
+#volumeDown:hover,
+#volumeUp:hover,
+#nextButton:hover,
+#practice-now:hover {
+    background-color: #ff4d4d;
+}
+
+/* Spinner CSS */
+#spinner {
+    display: none; /* Hide the spinner by default */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px; /* Adjust width as needed */
+    height: 50px; /* Adjust height as needed */
+    z-index: 9999; /* Ensure the spinner is on top of other elements */
+}
+
+.htmx-request .htmx-indicator {
+    opacity: 1;
+}
+
+/* Option Menu */
+#optionMenu {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 2px solid #385f38;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+            color: #333;
+        }
+
+.speak_action {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Additional Animations */
+@keyframes bounce {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+
+#practice-now {
+    animation: bounce 1s infinite;
+}
+
+.htmx-indicator {
+            opacity: 0;
+            transition: opacity 500ms ease-in;
+            width: 100px;
+            height: 100px;
+
+        }
+
+        .htmx-request .htmx-indicator {
+            opacity: 1;
+
+        }
+
+        .htmx-request.htmx-indicator {
+            opacity: 1
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <a href="#">About</a>
+    </div>
+    <div class="container">
+        <h1>
+            <div class="text_bg"> Start HERE!</div>
+        </h1>
+        <form hx-post="/train" hx-target="body" hx-swap="innerHTML" hx-indicator="#spinner">
+            <img id="spinner" class="htmx-indicator" src="/static/bouncing-circles.svg" />
+            <input type="hidden" name="lang" value="{{session.lang}}" />
+            <select id="optionMenu" name="chapter">
+                <option value="how to introduce oneself" {% if chapter == 'how to introduce oneself' %} selected {% endif %}>Introducing Yourself </option>
+                <option value="greeting sentences" {% if chapter == 'greeting sentences' %} selected {% endif %}>Greetings</option>
+                <option value="saying goodbye" {% if chapter == 'saying goodbye' %} selected {% endif %}>Saying Goodbye</option>
+                <option value="making apologies" {% if chapter == 'making apologies' %} selected {% endif %}>Making Apologies</option>
+                <option value="how to thankyou" {% if chapter == 'how to thankyou' %} selected {% endif %}>Thank You</option>
+            </select>
+            <input type="submit" value="Generate" id="generate-button">
+        </form>
+        <div class="step">
+            <h2> Generated Text</h2>
+            <p class="lead result">{{result|safe}}</p>
+        </div>
+        <div class="step">
+            <h2> Play Generated Text</h2>
+            <div class="audio-controls">
+                <button id="playButton" label="Play">▶</button>
+                <!-- <input type="range" class="volume-slider" min="0" max="100" value="50">
+                <button id="volumeDown">-</button>
+                <button id="volumeUp">+</button> -->
+            </div>
+        </div>
+        <!-- start speaking -->
+        <div class="speak_action">
+            <button id="practice-now" class="btn btn-danger">
+                <i class="fa fa-microphone"></i>
+                Your Turn to practice this
+            </button>
+        </div>
+        <div class="step">
+            <h2> User Input</h2>
+            <textarea id="userInput"></textarea>
+        </div>
+        <div class="step">
+            <h2> Correction Box</h2>
+            <div id="correctionBox"></div>
+        </div>
+        <div>
+            <button id="nextButton">Next</button>
+        </div>
+    </div>
+
+    <script>
+        var converter = new showdown.Converter();
+        var resultArea = document.querySelector('.result')
+        var practiceNow = document.getElementById('practice-now');
+        var userInput = document.getElementById('userInput');
+        var volumeSlider = document.querySelector('.volume-slider');
+        var volumeUpButton = document.getElementById('volumeUp');
+        var volumeDownButton = document.getElementById('volumeDown');
+        var correctionBox = document.getElementById('correctionBox');
+        var originalContextBox = document.querySelector('.lead.result')
+        var nextButton = document.getElementById('nextButton');
+        var optionMenu = document.getElementById('optionMenu');
+        var content = ""
+        var is_practice = false;
+        var is_practice_completed = false;
+
+        // disable the practice button and user input
+        practiceNow.disabled = true;
+        userInput.disabled = true;
+
+        // Function to extract content from specific tag
+        function extractContent(tagName) {
+            var elements = document.getElementsByTagName(tagName);
+            var contentArray = [];
+            for (var i = 0; i < elements.length; i++) {
+                contentArray.push(elements[i].textContent.trim());
+            }
+            return contentArray.join(' '); // Join array elements into a single string
+        }
+
+        document.addEventListener('htmx:afterRequest', function (evt) {
+            var html = converter.makeHtml(resultArea.innerHTML);
+            resultArea.innerHTML = html;
+            content = extractContent('p'); // Extract content from <p> tag
+            console.log("Content from <p> tag:", content);
+            console.log("content updated")
+        });
+
+        // document.addEventListener('htmx:afterRequest', function (evt) {
+        //     var html = converter.makeHtml(resultArea.innerHTML)
+        //     resultArea.innerHTML = html;
+        //     content = document.querySelector('.step').innerHTML
+        //     content = content.replace(/<[^>]*>/g, "");
+        // });
+
+        // Get the play button
+        var playButton = document.getElementById('playButton');
+
+        // Add an event listener to the play button
+        playButton.addEventListener('click', function () {
+            var lang = `{{session.lang_code}}`;
+            console.log(`Language selected: ${lang}`);
+            console.log("loading content")
+            // Cancel any previously speaking
+            content = extractContent('p')
+            console.log("Content from <p> tag in play:", content);
+            window.speechSynthesis.cancel();
+            console.log(content)
+            // Iterate over the NodeList of .result element
+            // Create a new SpeechSynthes isUtterance object with the result text
+            const utterance = new SpeechSynthesisUtterance;
+            utterance.text = content;
+            utterance.voice = speechSynthesis.getVoices().filter(function (voice) {
+                return voice.lang == lang;
+            })[0];
+            console.log(utterance.voice)
+            // Speak the text and enable the practice button when done
+            speechSynthesis.speak(utterance);
+            utterance.onend = function () {
+                practiceNow.disabled = false;
+                userInput.disabled = false;
+
+            }
+            utterance.onerror = function () {
+                console.error("An error occurred while speaking");
+                practiceNow.disabled = false;
+                userInput.disabled = false;
+            }
+        });
+
+
+        // Function to speak the user input
+        practiceNow.addEventListener('click', function (event) {
+            is_practice_completed = false;
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = `{{session.lang_code}}`;
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.start();
+            is_practice = true;
+            recognition.onresult = function (event) {
+                const transcript = Array.from(event.results)
+                    .map(result => result[0])
+                    .map(result => result.transcript)
+                    .join('');
+                console.log(transcript);
+                userInput.textContent = transcript;
+                if (event.results[0].isFinal) {
+                    recognition.stop();
+                    userInput.textContent += ". 🎙️";
+                    is_practice = false;
+                    is_practice_completed = true;
+                    suggestCorrections();
+                }
+            }
+        });
+
+        // Function to run when practice is completed
+        suggestCorrections = function () {
+            if (is_practice_completed) {
+                console.log("Practice completed")
+                var userText = userInput.value;
+                var originalText = originalContextBox.textContent;
+                correction_url = "/api/correction"
+                post_data = {
+                    "original_text": originalText,
+                    "spoken_text": userText
+                }
+                if (userText.trim() === originalText.trim()) {
+                    correctionBox.innerHTML = "🎉 Great job! You got it right! 🎉";
+                } else {
+                    // send as form data
+                    fetch(correction_url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(post_data)
+                    }).then(
+                        response => response.json()
+                    ).then(data => {
+                        console.log(data);
+                        correctionBox.innerHTML = data['result'];
+                    }).catch(error => {
+                        console.error("Error:", error);
+                    });
+                }
+            }
+        }
+
+        // Function to increase volume
+        volumeUpButton.addEventListener('click', function () {
+            if (volumeSlider.value < 100) {
+                volumeSlider.value = parseInt(volumeSlider.value) + 10; // Increase volume by 10
+            }
+        });
+        // Function to decrease volume
+        volumeDownButton.addEventListener('click', function () {
+            if (volumeSlider.value > 0) {
+                volumeSlider.value = parseInt(volumeSlider.value) - 10; // Decrease volume by 10
+            }
+        });
+        volumeSlider.addEventListener('input', function () {
+            audioElement.volume = volumeSlider.value / 100; // Convert the slider value to a value between 0 and 1
+        });
+
+        // store the selected option in local storage
+        optionMenu.addEventListener('change', function () {
+            var selectedOption = optionMenu.value;
+            localStorage.setItem('selectedOption', selectedOption);
+        });
+
+
+        //  simulate click on generate button
+        nextButton.addEventListener('click', function () {
+            // set the selected option to the previous selected option
+            var selectedOption = localStorage.getItem('selectedOption');
+            optionMenu.value = selectedOption;
+            
+            document.querySelector('#generate-button').click();
+        });
+    </script>
+</body>
+
+</html>

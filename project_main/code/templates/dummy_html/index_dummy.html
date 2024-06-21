@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinguaEase</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dummy_style.css') }}">
+</head>
+<style>
+    /* Global styles */
+body {
+    font-family: 'Roboto', sans-serif; /* Use Roboto font for better readability */
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8; /* Light gray background */
+}
+
+.container {
+    width: 90%; /* Increase container width for better readability */
+    margin: 0 auto;
+}
+
+.container h2 {
+    text-align: center;
+    margin-bottom: 40px;
+    font-size: 2.5rem; /* Adjust heading font size */
+    color: #333; /* Dark gray color for headings */
+}
+
+/* Header styles */
+header {
+    background-color: #68e98c; /* Green background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #333; /* Dark gray color for logo */
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    display: inline;
+    margin-left: 20px; /* Add spacing between nav items */
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #333; /* Dark gray color for links */
+    font-weight: bold;
+}
+
+.cta-button {
+    background-color: #68e98c; /* Green button background color */
+    color: #fff; /* White text color */
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cta-button:hover {
+    background-color: #5cbf7e; /* Darker green on hover */
+}
+
+/* Hero section styles */
+.hero {
+    background-size: cover;
+    color: #333; /* Dark gray color for text */
+    padding-top: 100px; /* Increase padding for better spacing */
+    padding-bottom: 100px;
+}
+
+.hero-content {
+    text-align: center;
+    background-color: #fff; /* White background */
+    padding: 50px 0;
+}
+
+.hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+}
+
+.hero-content h3 {
+    font-size: 1.5rem; /* Adjust font size */
+    margin-bottom: 40px;
+}
+
+.image-container {
+    display: flex;
+    justify-content: center; /* Center align images */
+    align-items: center;
+    margin-top: 20px;
+}
+
+.img-rounded {
+    border-radius: 50%;
+    width: 150px; /* Increase image size */
+    height: 150px;
+    margin: 0 15px; /* Add spacing between images */
+}
+
+.icon span {
+    display: block;
+    font-size: 1.2rem; /* Adjust font size */
+}
+
+/* Features section styles */
+.features {
+    background-color: #f8f8f8; /* Light gray background */
+    padding: 100px 0;
+}
+
+.features h2 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.feature p {
+    text-align: left; /* Align text to left */
+}
+
+</style>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="#" class="logo">LinguaEase</a>
+                <ul class="nav-links">
+                    {% if session.isauth %}
+                    <a href="/profile" class="cta-button">Profile</a>
+                    <a href="/logout"  class="cta-button">Log Out</a>
+                    {% else %}
+                    <a href="/register" class="cta-button">Register</a>
+                    <a href="/login" class="cta-button">Log In</a>
+                     {% endif %}
+
+                </ul>
+            </div>
+        </nav>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info mx-3 mt-3" role="alert">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Learn speaking languages online with <span class="highlight">LinguaEase</span></h1>
+                <h3>Start speaking a language with confidence today.<br> Choose languages and lessons.</h3>
+                <div class="image-container">
+                    <div class="icon">
+                        <a href="/train?lang=us_english">
+                            <img src="/static/america.jpg" title="Lets GO!" class="img-rounded">
+                            <span>AMERICAN</span>
+                        </a>
+                    </div>
+
+                    <div class="icon">
+                        <a href="/train?lang=british_english">
+                            <img src="/static/britain.jpg" title="Lets GO!" class="img-rounded">
+                            <span>BRITISH</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=australian_english">
+                            <img src="/static/australia.jpg" title="Lets GO!" class="img-rounded">
+                            <span>AUSTRALIAN</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=hindi">
+                            <img src="/static/indian.jpeg" title="Lets GO!" class="img-rounded">
+                            <span>INDIAN</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=russian">
+                            <img src="/static/Russian.jpeg" title="Comming Soon" class="img-rounded">
+                            <span>RUSSIAN</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=spanish">
+                            <img src="/static/Spanish.jpeg" title="Comming Soon" class="img-rounded">
+                            <span>SPANISH</span>
+                        </a>
+                    </div>
+
+                    
+                <!-- </div>
+
+                <a href="/train" class="cta-button">Start speaking</a>
+            </div> -->
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Why learn with LinguaEase?</h2>
+            <div class="feature">
+                <img src="/static/ai_gen.png" alt="Feature 1" >
+                <h3>AI generated courses</h3>
+                <p> Our language courses are created by generative AI. You'll learn the real language, as it's
+                    spoken by native speakers.</p>
+            </div>
+            <div class="feature">
+                <img src="/static/person.avif" alt="Feature 2">
+                <h3>Personalized learning</h3>
+                <p>     Our adaptive learning technology tailors your learning plan to suit your goals, keeping you motivated
+                    every step of the way.</p>
+            </div> 
+            <div class="feature">
+                <img src="/static/ascent.avif" alt="Feature 3">
+                <h3>Different Ascents</h3>
+                <p>     Practice your speaking, listening, and reading skills with interactive courses.</p>
+            </div>
+        </div>
+    </section>
+
+
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinguaEase</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dummy_style.css') }}">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="#" class="logo">LinguaEase</a>
+                <ul class="nav-links">
+                    {% if session.isauth %}
+                    <a href="/profile" class="cta-button">Profile</a>
+                    <a href="/logout"  class="cta-button">Log Out</a>
+                    {% else %}
+                    <a href="/register" class="cta-button">Register</a>
+                    <a href="/login" class="cta-button">Log In</a>
+                     {% endif %}
+
+                </ul>
+            </div>
+        </nav>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-info mx-3 mt-3" role="alert">
+            {% for message in messages %}
+            {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Learn speaking languages online with <span class="highlight">LinguaEase</span></h1>
+                <h3>Start speaking a language with confidence today.<br> Choose languages and lessons.</h3>
+                <div class="image-container">
+                    <div class="icon">
+                        <a href="/train?lang=us_english">
+                            <img src="/static/america.jpg" title="Lets GO!" class="img-rounded">
+                            <span>AMERICAN</span>
+                        </a>
+                    </div>
+
+                    <div class="icon">
+                        <a href="/train?lang=british_english">
+                            <img src="/static/britain.jpg" title="Lets GO!" class="img-rounded">
+                            <span>BRITISH</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=australian_english">
+                            <img src="/static/australia.jpg" title="Lets GO!" class="img-rounded">
+                            <span>AUSTRALIAN</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=hindi">
+                            <img src="/static/indian.jpeg" title="Lets GO!" class="img-rounded">
+                            <span>INDIAN</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=russian">
+                            <img src="/static/Russian.jpeg" title="Comming Soon" class="img-rounded">
+                            <span>RUSSIAN</span>
+                        </a>
+                    </div>
+                    <div class="icon">
+                        <a href="/train?lang=spanish">
+                            <img src="/static/Spanish.jpeg" title="Comming Soon" class="img-rounded">
+                            <span>SPANISH</span>
+                        </a>
+                    </div>
+
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="container">
+            <h2>Why learn with LinguaEase?</h2>
+            <div class="feature">
+                <img src="/static/ai_gen.png" alt="Feature 1" >
+                <h3>AI generated courses</h3>
+                <p> Our language courses are created by generative AI. You'll learn the real language, as it's
+                    spoken by native speakers.</p>
+            </div>
+            <div class="feature">
+                <img src="/static/person.avif" alt="Feature 2">
+                <h3>Personalized learning</h3>
+                <p>     Our adaptive learning technology tailors your learning plan to suit your goals, keeping you motivated
+                    every step of the way.</p>
+            </div> 
+            <div class="feature">
+                <img src="/static/ascent.avif" alt="Feature 3">
+                <h3>Different Ascents</h3>
+                <p>     Practice your speaking, listening, and reading skills with interactive courses.</p>
+            </div>
+        </div>
+    </section>
+
+
+</body>
+
+</html>
